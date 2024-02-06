@@ -76,18 +76,18 @@ sellerId: {
       required: true,
     },
     // Adding latitude and longitude
-    location: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point',
-        required: false,
-      },
-      coordinates: {
-        type: [Number],
-        required: false,
-      },
-    }
+    // location: {
+    //   type: {
+    //     type: String,
+    //     enum: ['Point'],
+    //     default: 'Point',
+    //     // required: false,
+    //   },
+    //   coordinates: {
+    //     type: [Number],
+    //     // required: false,
+    //   },
+    // }
     
     
   },
