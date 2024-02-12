@@ -15,6 +15,14 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 const randomatic = require("randomatic");
 const WorkLog = require('../Models/workLogModel');
+const twilio = require('twilio');
+
+
+const accountSid = 'AC1e5267b05a62ae1b6d1252802b8b1efa';
+const authToken = 'af7ff1944a559576f88b5f5da4926677';
+const twilioClient = new twilio(accountSid, authToken);
+const twilioPhoneNumber = '+16592877133';
+
 
 // const multer = require('multer');
 const cloudinary = require("cloudinary").v2;
@@ -57,8 +65,11 @@ exports.registerDriver = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Send OTP via SMS using Twilio
-    // ...
+    await twilioClient.messages.create({
+      body: `Your OTP is: ${otp}`,
+      to: `+91${mobileNumber}`,
+      from: twilioPhoneNumber,
+    });
 
     res.json({ message: "OTP sent successfully", user });
   } catch (error) {
@@ -105,59 +116,59 @@ exports.verifyDriver = async (req, res) => {
 
 exports.driverDetails = async (req, res) => {
 
-    try {
-      let user = await User.findById({ _id: req.params.id });
-  
-      if (!user) {
-        res.status(404).send({ message: "Data not found", status: 404, data: [] });
-      } else {
-        let findData = await DriverDetails.findOne({ user: user._id });
-  
-        let data = {
-          user: user._id,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          door: req.body.door,
-          street: req.body.street,
-          city: req.body.city,
-          pincode: req.body.pincode,
-          landmark: req.body.landmark,
-          gender: req.body.gender,
-          location: {
-            type: req.body.locationType || 'Point',
-            coordinates: req.body.coordinates || [0, 0],
-          },
-        };
-  
-        if (findData) {
-          let update = await DriverDetails.findByIdAndUpdate(
-            { _id: findData._id },
-            data,
-            { new: true }
-          );
-  
-          if (update) {
-            res.status(200).send({
-              message: "Data updated successfully",
-              status: 200,
-              data: update,
-            });
-          }
-        } else {
-          const userCreate = await driverDetails.create(data);
+  try {
+    let user = await User.findById({ _id: req.params.id });
+
+    if (!user) {
+      res.status(404).send({ message: "Data not found", status: 404, data: [] });
+    } else {
+      let findData = await DriverDetails.findOne({ user: user._id });
+
+      let data = {
+        user: user._id,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        door: req.body.door,
+        street: req.body.street,
+        city: req.body.city,
+        pincode: req.body.pincode,
+        landmark: req.body.landmark,
+        gender: req.body.gender,
+        location: {
+          type: req.body.locationType || 'Point',
+          coordinates: req.body.coordinates || [0, 0],
+        },
+      };
+
+      if (findData) {
+        let update = await DriverDetails.findByIdAndUpdate(
+          { _id: findData._id },
+          data,
+          { new: true }
+        );
+
+        if (update) {
           res.status(200).send({
-            message: "Data created successfully",
+            message: "Data updated successfully",
             status: 200,
-            data: userCreate,
+            data: update,
           });
         }
+      } else {
+        const userCreate = await driverDetails.create(data);
+        res.status(200).send({
+          message: "Data created successfully",
+          status: 200,
+          data: userCreate,
+        });
       }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error", status: 500 });
     }
-  };
-  
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+};
+
 exports.shiftDetails = async (req, res) => {
   try {
     let user = await User.findById({ _id: req.params.id });
@@ -610,7 +621,7 @@ exports.orderDelivered = async (req, res) => {
 
     // Calculate and update the driver's earnings
     const earnings = perOrderEarning;
-    
+
     console.log("Order:", order);
     drivers.earnings += earnings;
     await drivers.save();
@@ -620,7 +631,7 @@ exports.orderDelivered = async (req, res) => {
       driverId: driverId,
       orderId: orderId,
       earnings: earnings,
-      totalEaring:earnings
+      totalEaring: earnings
     });
     await earningHistoryEntry.save();
 
@@ -795,7 +806,7 @@ exports.todayEarning = async (req, res) => {
 //     if (!workLog) {
 //       return res.status(404).json({ message: 'Work log not found for the delivery boy on the current date.', status: 404 });
 //     }
-  
+
 //     res.status(200).json({
 //       message: 'Total hours worked retrieved successfully',
 //       status: 200,
@@ -816,104 +827,104 @@ exports.todayEarning = async (req, res) => {
 
 exports.weeklyEarning = async (req, res) => {
 
-try {
-  const driverId = req.user.id; // Assuming you have the driver's ID in the request object
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  try {
+    const driverId = req.user.id; // Assuming you have the driver's ID in the request object
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - 7);
-console.log(startOfWeek);
-  const endOfWeek = new Date(today);
-  endOfWeek.setDate(startOfWeek.getDate() + 7); 
-  console.log(endOfWeek);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - 7);
+    console.log(startOfWeek);
+    const endOfWeek = new Date(today);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    console.log(endOfWeek);
 
-  // Find earning history entries for the current week and the specific driver
-  const weeklyEarningHistory = await DriverEarningHistory.find({
-    driverId: driverId,
-    createdAt: { $gte: startOfWeek, $lt: endOfWeek },
-  });
+    // Find earning history entries for the current week and the specific driver
+    const weeklyEarningHistory = await DriverEarningHistory.find({
+      driverId: driverId,
+      createdAt: { $gte: startOfWeek, $lt: endOfWeek },
+    });
 
-  res.status(200).json({ success: true, data: weeklyEarningHistory });
-} catch (error) {
-  console.error('Error fetching driver earning history:', error);
-  res.status(500).json({ success: false, error: 'Failed to fetch driver earning history' });
-}
+    res.status(200).json({ success: true, data: weeklyEarningHistory });
+  } catch (error) {
+    console.error('Error fetching driver earning history:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch driver earning history' });
+  }
 };
 
 exports.activeOrder = async (req, res) => {
 
-try {
-  const { driverId } = req.params;
+  try {
+    const { driverId } = req.params;
 
-  // Find orders assigned to the driver with a status other than "delivered"
-  const orders = await Order.find({ driverId: driverId, status: { $ne: 'delivered' } }).populate("products.productId");
+    // Find orders assigned to the driver with a status other than "delivered"
+    const orders = await Order.find({ driverId: driverId, status: { $ne: 'delivered' } }).populate("products.productId");
 
-  res.status(200).json({ message: 'Driver orders retrieved successfully', status: 200, data: orders });
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Internal server error', status: 500, error: error.message });
-}
+    res.status(200).json({ message: 'Driver orders retrieved successfully', status: 200, data: orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', status: 500, error: error.message });
+  }
 };
 exports.loginDetail = async (req, res) => {
 
-try {
-  const { driverId } = req.params;
+  try {
+    const { driverId } = req.params;
 
-  // Find the work log for the driver
-  const workLog = await WorkLog.findOne({ deliveryBoy: driverId });
-  
-  if (!workLog) {
-    return res.status(404).json({ message: 'Work log not found for the specified driver', status: 404 });
+    // Find the work log for the driver
+    const workLog = await WorkLog.findOne({ deliveryBoy: driverId });
+
+    if (!workLog) {
+      return res.status(404).json({ message: 'Work log not found for the specified driver', status: 404 });
+    }
+
+    // Extract start times and total hours worked from shifts
+    const shifts = workLog.shifts.map((shift) => ({
+      startTime: shift.startTime,
+      totalHoursWorked: shift.duration.hours + shift.duration.minutes / 60,
+    }));
+
+    res.status(200).json({ message: 'Driver work log details retrieved successfully', status: 200, data: shifts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', status: 500, error: error.message });
   }
-
-  // Extract start times and total hours worked from shifts
-  const shifts = workLog.shifts.map((shift) => ({
-    startTime: shift.startTime,
-    totalHoursWorked: shift.duration.hours + shift.duration.minutes / 60,
-  }));
-
-  res.status(200).json({ message: 'Driver work log details retrieved successfully', status: 200, data: shifts });
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Internal server error', status: 500, error: error.message });
-}
 };
 
 exports.addBonus = async (req, res) => {
 
-try {
-  const { rainBonus, peakHourBonus } = req.body;
-  const historyId = req.params.historyId;
+  try {
+    const { rainBonus, peakHourBonus } = req.body;
+    const historyId = req.params.historyId;
 
-  // Validate that the earning history entry exists
-  const earningHistory = await DriverEarningHistory.findById(historyId);
+    // Validate that the earning history entry exists
+    const earningHistory = await DriverEarningHistory.findById(historyId);
 
-  if (!earningHistory) {
-    return res.status(404).json({ error: "Earning history entry not found" });
+    if (!earningHistory) {
+      return res.status(404).json({ error: "Earning history entry not found" });
+    }
+
+    // Update rainBonus and peakHourBonus fields
+    earningHistory.rainBonus = rainBonus || earningHistory.rainBonus;
+    earningHistory.peakHourBonus = peakHourBonus || earningHistory.peakHourBonus;
+
+    // Calculate total earning with bonuses
+    const totalEarning = earningHistory.earnings + earningHistory.rainBonus + earningHistory.peakHourBonus;
+    console.log(totalEarning);
+    earningHistory.totalEaring = totalEarning;
+
+    // Save the updated earning history entry
+    await earningHistory.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Earning history entry updated successfully',
+      data: earningHistory,
+    });
+  } catch (error) {
+    console.error('Error updating earning history entry:', error);
+    res.status(500).json({ success: false, error: 'Failed to update earning history entry' });
   }
-
-  // Update rainBonus and peakHourBonus fields
-  earningHistory.rainBonus = rainBonus || earningHistory.rainBonus;
-  earningHistory.peakHourBonus = peakHourBonus || earningHistory.peakHourBonus;
-
-  // Calculate total earning with bonuses
-  const totalEarning = earningHistory.earnings + earningHistory.rainBonus + earningHistory.peakHourBonus;
-  console.log(totalEarning);
-  earningHistory.totalEaring = totalEarning;
-
-  // Save the updated earning history entry
-  await earningHistory.save();
-
-  res.status(200).json({
-    success: true,
-    message: 'Earning history entry updated successfully',
-    data: earningHistory,
-  });
-} catch (error) {
-  console.error('Error updating earning history entry:', error);
-  res.status(500).json({ success: false, error: 'Failed to update earning history entry' });
-}
 };

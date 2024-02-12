@@ -11,6 +11,8 @@ const randomatic = require('randomatic');
 const cloudinary = require('cloudinary').v2;
 // const twilio = require('twilio');
 const bcrypt = require("bcryptjs");
+const twilio = require('twilio');
+
 // Initialize Twilio client
 // const twilioClient = twilio(
 //     process.env.TWILIO_ACCOUNT_SID,
@@ -21,6 +23,13 @@ cloudinary.config({
   api_key: '624644714628939', 
   api_secret: 'tU52wM1-XoaFD2NrHbPrkiVKZvY' 
 });
+
+const accountSid = 'AC727c4bd48d5347140fd5dd8ed75b6dc7';
+const authToken = '3609070a404e09105de8dbd293e00215';
+const twilioClient = new twilio(accountSid, authToken);
+const twilioPhoneNumber = '+12054309019';
+
+
   exports.registerUser = async (req, res) => {
     try {
         const mobileNumber = req.body.mobileNumber;
@@ -39,8 +48,11 @@ cloudinary.config({
           { new: true, upsert: true }
         );
     
-        // Send OTP via SMS using Twilio
-        // ...
+        await twilioClient.messages.create({
+          body: `Your OTP is: ${otp}`,
+          to: `+91${mobileNumber}`,
+          from: twilioPhoneNumber,
+        });
     
         res.json({ message: 'OTP sent successfully',user });
       } catch (error) {

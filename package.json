@@ -24,6 +24,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.0.1",
     "otp-generator": "^4.0.1",
-    "randomatic": "^3.1.1"
+    "randomatic": "^3.1.1",
+    "twilio": "^4.22.0"
   }
 }
