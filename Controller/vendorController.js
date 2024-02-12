@@ -48,10 +48,10 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 
-const accountSid = 'AC1e5267b05a62ae1b6d1252802b8b1efa';
-const authToken = 'af7ff1944a559576f88b5f5da4926677';
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
 const twilioClient = new twilio(accountSid, authToken);
-const twilioPhoneNumber = '+16592877133';
+const twilioPhoneNumber = process.env.twilioPhoneNumber;
 
 
 exports.registerVendor = async (req, res) => {
