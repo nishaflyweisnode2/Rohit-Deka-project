@@ -24,10 +24,10 @@ cloudinary.config({
   api_secret: 'tU52wM1-XoaFD2NrHbPrkiVKZvY' 
 });
 
-const accountSid = 'AC727c4bd48d5347140fd5dd8ed75b6dc7';
-const authToken = '3609070a404e09105de8dbd293e00215';
+const accountSid = 'AC1e5267b05a62ae1b6d1252802b8b1efa';
+const authToken = 'af7ff1944a559576f88b5f5da4926677';
 const twilioClient = new twilio(accountSid, authToken);
-const twilioPhoneNumber = '+12054309019';
+const twilioPhoneNumber = '+16592877133';
 
 
   exports.registerUser = async (req, res) => {
