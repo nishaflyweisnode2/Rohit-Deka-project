@@ -237,8 +237,11 @@ exports.loginDriver = async (req, res) => {
     user.otp = otp;
     await user.save();
 
-    // Send the OTP to the user (e.g., via SMS, email, etc.)
-    // ...
+    await twilioClient.messages.create({
+      body: `Your OTP is: ${otp}`,
+      to: `+91${mobileNumber}`,
+      from: twilioPhoneNumber,
+    });
 
     res.json({ message: "OTP generated and sent to the Driver", user });
   } catch (error) {
@@ -296,6 +299,12 @@ exports.resendOtp = async (req, res) => {
       { otp, isVerified },
       { new: true }
     );
+    await twilioClient.messages.create({
+      body: `Your OTP is: ${otp}`,
+      to: `+91${mobileNumber}`,
+      from: twilioPhoneNumber,
+    });
+    
     res.status(200).send({ message: "OTP resent", otp: otp });
   } catch (error) {
     console.error(error);

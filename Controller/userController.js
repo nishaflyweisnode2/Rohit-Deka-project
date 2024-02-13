@@ -222,8 +222,11 @@ exports.loginUser = async (req, res) => {
       // Save the updated OTP to the user's record in the database
       await user.save();
 
-      // Send the new OTP to the user via SMS or any other preferred method
-      // Example: SMSService.sendOTP(mobileNumber, otp);
+      await twilioClient.messages.create({
+        body: `Your OTP is: ${otp}`,
+        to: `+91${mobileNumber}`,
+        from: twilioPhoneNumber,
+      });
 
       res.json({ message: 'New OTP generated and sent to the user', user });
     }
