@@ -39,7 +39,7 @@ exports.registerUser = async (req, res) => {
     }
 
     // Generate OTP
-    const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+    const otp = otpGenerator.generate(4, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 
     // Save the generated OTP to the user's record in the database
     const user = await User.findOneAndUpdate(
