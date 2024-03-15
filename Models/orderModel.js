@@ -8,47 +8,47 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
-},
-sellerId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Seller',
-},
+  },
+  sellerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Seller',
+  },
   products: [
     {
       productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
-     
+
       },
       quantity: {
         type: Number,
-     
+
       },
       price: {
         type: Number,
-      
+
       },
-      sellerId: {
+      createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
     }
   ],
   shipping: {
     type: Number,
-  
+
   },
   tax: {
     type: Number,
-   
+
   },
   couponDiscount: {
     type: Number,
-   
+
   },
   coupon: {
     type: String,
-   
+
   },
   subTotal: {
     type: Number,
@@ -60,7 +60,7 @@ sellerId: {
   },
   includePaperBag: {
     type: String,
-    default:"false"
+    default: "false"
   },
   address: {
     street: {
@@ -88,19 +88,19 @@ sellerId: {
     //     // required: false,
     //   },
     // }
-    
-    
+
+
   },
-  
-  
+
+
   status: {
     type: String,
-    enum: ['pending','confirmed', 'accepted','rejected','picked','checked','preparing','ready to deliver' ,'rejected','delivered'],
+    enum: ['pending', 'confirmed', 'accepted', 'rejected', 'picked', 'checked', 'preparing', 'ready to deliver', 'rejected', 'delivered'],
     default: 'pending'
   },
   orderStatus: {
     type: String,
-    enum: ['unconfirmed','confirmed', ],
+    enum: ['unconfirmed', 'confirmed',],
     default: 'unconfirmed'
   },
   otpOrder: {
@@ -109,10 +109,9 @@ sellerId: {
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Assuming that the product's createdBy field is a reference to the User model
-    // required: true,
+    ref: 'User',
   },
-  paymentMethod: { type: String, enum: ['cash-on-delivery', 'not paid','upi'], default: 'not paid' },
+  paymentMethod: { type: String, enum: ['cash-on-delivery', 'not paid', 'upi'], default: 'not paid' },
   createdAt: {
     type: Date,
     default: Date.now
@@ -121,7 +120,7 @@ sellerId: {
     type: Boolean,
     default: false,
   },
-  
+
   reasonForReturn: {
     type: String,
   },
@@ -141,9 +140,9 @@ sellerId: {
     // required: true,
   },
   instruction: {
-      type: String,
-      default: "",
-    },
+    type: String,
+    default: "",
+  },
   rejectionReason: {
     type: String
   },
@@ -154,7 +153,7 @@ sellerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }
-// });
+  // });
 }, { timestamps: true });
 orderSchema.index({ 'address.location': '2dsphere' });
 

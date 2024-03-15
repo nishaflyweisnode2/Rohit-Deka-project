@@ -177,7 +177,7 @@ exports.shiftDetails = async (req, res) => {
         .status(404)
         .send({ message: "Data not found", status: 404, data: [] });
     } else {
-      let findData = await driverDetails.findOne({ user: user._id });
+      let findData = await DriverDetails.findOne({ user: user._id });
       if (findData) {
         let data = {
           user: user._id,
@@ -185,7 +185,7 @@ exports.shiftDetails = async (req, res) => {
           area: req.body.area,
           time: req.body.time,
         };
-        let update = await driverDetails.findByIdAndUpdate(
+        let update = await DriverDetails.findByIdAndUpdate(
           { _id: findData._id },
           { data },
           { new: true }
@@ -204,7 +204,7 @@ exports.shiftDetails = async (req, res) => {
           area: req.body.area,
           time: req.body.time,
         };
-        const userCreate = await driverDetails.create(data);
+        const userCreate = await DriverDetails.create(data);
         res.status(200).send({
           message: "Data create successfully",
           status: 200,
@@ -314,7 +314,7 @@ exports.resendOtp = async (req, res) => {
 
 exports.getdriverDetail = async (req, res, next) => {
   try {
-    const driverdetails = await driverDetails.find().populate("user");
+    const driverdetails = await DriverDetails.find().populate("user");
     res.json(driverdetails);
   } catch (error) {
     console.error(error);
@@ -326,7 +326,7 @@ exports.getsingledriverDetail = async (req, res, next) => {
   const driverId = req.params.id;
 
   try {
-    const driverDetail = await driverDetails.findOne({ user: driverId }).populate('user').populate('shift').populate('area').populate('time');
+    const driverDetail = await DriverDetails.findOne({ user: driverId }).populate('user').populate('shift').populate('area').populate('time');
 
     if (!driverDetail) {
       return res.status(404).json({ error: 'Driver not found.' });
@@ -342,7 +342,7 @@ exports.getsingledriverDetail = async (req, res, next) => {
 exports.driverProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const detail = await DriverDetails.findOne({ user: req.user._id });
+    const detail = await DriverDetails.findOne({ user: req.user._id }).populate('time area shift');
 
     if (!user) {
       res.status(404).send({ status: 404, message: "User not found", data: {} });
@@ -410,7 +410,7 @@ exports.updateBankDetails = async (req, res) => {
 exports.updateDocument = async (req, res) => {
   try {
     // Check if the document with the given user ID exists
-    const existingUser = await driverDetails.findOne({ user: req.params.id });
+    const existingUser = await DriverDetails.findOne({ user: req.params.id });
 
     if (!existingUser) {
       return res.status(404).json({ msg: "User not found" });
@@ -553,7 +553,7 @@ exports.orderPicked = async (req, res) => {
         .json({ error: "Not authorized to update this order" });
     }
     // Check if the current order status is "ready to deliver"
-    if (order.status !== "ready to deliver") {
+    if (order.status === 'ready to deliver') {
       return res.status(400).json({ error: "Invalid order status. " });
     }
     // Update the order status to "picked"

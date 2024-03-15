@@ -367,7 +367,9 @@ exports.assignOrdertoDriver = async (req, res, next) => {
       return res.status(404).json({ message: 'Order not found', status: 404 });
     }
     // Assign the order to the driver
-    order.driverId = driverId;
+    if (driverId) {
+      order.driverId = driverId;
+    }
     order.orderStatus = "confirmed";
 
     await order.save();

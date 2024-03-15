@@ -24,7 +24,7 @@ exports.AddCart = async (req, res) => {
         if (!dbProduct) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
-        const productcreatedBy = dbProduct.createdBy;
+        const productcreatedBy = await dbProduct.createdBy;
         const productPrice = dbProduct.price;
         // const totalPrice = productPrice * quantity;
 
@@ -51,6 +51,7 @@ exports.AddCart = async (req, res) => {
         if (!dbProduct) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
+        const productcreatedBy = await dbProduct.createdBy;
         const productPrice = dbProduct.price;
         // const totalPrice = productPrice * quantity;
 
@@ -59,6 +60,7 @@ exports.AddCart = async (req, res) => {
           productId,
           quantity,
           price: productPrice,
+          createdBy: productcreatedBy,
           // totalPrice,
         });
 
@@ -71,6 +73,8 @@ exports.AddCart = async (req, res) => {
         userId,
         products: cartProducts,
         instruction,
+        // price: productPrice,
+        // createdBy: productcreatedBy,
         // subtotal,
       });
     }
@@ -168,7 +172,7 @@ exports.applyCoupon = async (req, res) => {
 
     // Fetch the coupon by the provided coupon code
     const coupon = await Coupon.findOne({ _id: couponCode });
-console.log(coupon);
+    console.log(coupon);
     // Check if the coupon exists and is valid
     if (!coupon || coupon.expirationDate < Date.now()) {
       return res.status(400).json({ error: "Invalid coupon code or expired coupon" });
@@ -198,7 +202,7 @@ exports.removeCoupon = async (req, res) => {
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
-console.log(cart);
+    console.log(cart);
     // Remove the coupon from the cart
     cart.couponCode = null;
 
