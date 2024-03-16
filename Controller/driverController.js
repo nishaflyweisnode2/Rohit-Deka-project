@@ -432,7 +432,7 @@ exports.updateDocument = async (req, res) => {
     }
 
     // Update the document in the database
-    const user = await driverDetails.findOneAndUpdate(
+    const user = await DriverDetails.findOneAndUpdate(
       { user: req.params.id },
       {
         $set: {
