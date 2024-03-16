@@ -877,6 +877,7 @@ exports.activeOrder = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', status: 500, error: error.message });
   }
 };
+
 exports.loginDetail = async (req, res) => {
 
   try {
