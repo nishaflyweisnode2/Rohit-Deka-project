@@ -495,7 +495,7 @@ exports.getDocuments = async (req, res) => {
 
 exports.allOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ orderStatus: "confirmed" }).populate("user").populate("products.productId");
+    const orders = await Order.find({ orderStatus: "confirmed", status: "pending" }).populate("user").populate("products.productId");
 
     res.status(200).json({ success: true, orders });
   } catch (error) {
