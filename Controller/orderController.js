@@ -354,7 +354,7 @@ exports.readyOrder = async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
     console.log("order", order.products);
-    
+
     const unauthorizedProducts = order.products.filter(product => product.createdBy.toString() !== vendorId.toString());
     if (unauthorizedProducts.length > 0) {
       return res.status(403).json({ error: 'You are not authorized to update this order status' });
