@@ -304,7 +304,7 @@ exports.resendOtp = async (req, res) => {
       to: `+91${mobileNumber}`,
       from: twilioPhoneNumber,
     });
-    
+
     res.status(200).send({ message: "OTP resent", otp: otp });
   } catch (error) {
     console.error(error);
@@ -490,6 +490,17 @@ exports.getDocuments = async (req, res) => {
     res.status(200).json({ document });
   } catch (error) {
     res.status(500).json({ error: "Failed to get user bank details" });
+  }
+};
+
+exports.allOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ orderStatus: "confirmed" }).populate("user").populate("products.productId");
+
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
 
