@@ -155,7 +155,7 @@ exports.driverDetails = async (req, res) => {
           });
         }
       } else {
-        const userCreate = await driverDetails.create(data);
+        const userCreate = await DriverDetails.create(data);
         res.status(200).send({
           message: "Data created successfully",
           status: 200,
