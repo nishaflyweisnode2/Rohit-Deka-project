@@ -5,11 +5,11 @@ const imagePattern = "[^\\s]+(.*?)\\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$";
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
-cloudinary.config({ 
-    cloud_name: 'dtijhcmaa', 
-    api_key: '624644714628939', 
-    api_secret: 'tU52wM1-XoaFD2NrHbPrkiVKZvY' 
-  });
+cloudinary.config({
+  cloud_name: 'dvwecihog',
+  api_key: '364881266278834',
+  api_secret: '5_okbyciVx-7qFz7oP31uOpuv7Q'
+});
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -39,7 +39,7 @@ exports.createBrand = async (req, res) => {
     res.status(500).json({ status: 500, message: "internal server error ", data: error.message, });
   }
 };
-exports.getBrand= async (req, res) => {
+exports.getBrand = async (req, res) => {
   const Brands = await Brand.find({});
   res.status(201).json({ success: true, Brands, });
 };

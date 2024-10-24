@@ -5,11 +5,11 @@ const imagePattern = "[^\\s]+(.*?)\\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$";
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
-cloudinary.config({ 
-    cloud_name: 'dtijhcmaa', 
-    api_key: '624644714628939', 
-    api_secret: 'tU52wM1-XoaFD2NrHbPrkiVKZvY' 
-  });
+cloudinary.config({
+  cloud_name: 'dvwecihog',
+  api_key: '364881266278834',
+  api_secret: '5_okbyciVx-7qFz7oP31uOpuv7Q'
+});
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -20,25 +20,25 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 exports.createSubcategory = async (req, res) => {
-    try {
-        let findSubcategory = await Subcategory.findOne({ name: req.params.name });
-        console.log(req.params.name)
-        if (findSubcategory) {
-          res.status(409).json({ message: "Subcategory already exit.", status: 404, data: {} });
-        } else {
-          upload.single("image")(req, res, async (err) => {
-            if (err) { return res.status(400).json({ msg: err.message }); }
-            const fileUrl = req.file ? req.file.path : "";
-            const data = { name: req.params.name,categoryId:req.body.categoryId, image: fileUrl };
-            const subcategory = await Subcategory.create(data);
-            res.status(200).json({ message: "Subcategory add successfully.", status: 200, data: subcategory });
-          })
-        }
-    
-      } catch (error) {
-        res.status(500).json({ status: 500, message: "internal server error ", data: error.message, });
-      }
-    };
+  try {
+    let findSubcategory = await Subcategory.findOne({ name: req.params.name });
+    console.log(req.params.name)
+    if (findSubcategory) {
+      res.status(409).json({ message: "Subcategory already exit.", status: 404, data: {} });
+    } else {
+      upload.single("image")(req, res, async (err) => {
+        if (err) { return res.status(400).json({ msg: err.message }); }
+        const fileUrl = req.file ? req.file.path : "";
+        const data = { name: req.params.name, categoryId: req.body.categoryId, image: fileUrl };
+        const subcategory = await Subcategory.create(data);
+        res.status(200).json({ message: "Subcategory add successfully.", status: 200, data: subcategory });
+      })
+    }
+
+  } catch (error) {
+    res.status(500).json({ status: 500, message: "internal server error ", data: error.message, });
+  }
+};
 exports.getSubcategories = async (req, res) => {
   const subcategories = await Subcategory.find({}).populate("categoryId");
   res.status(201).json({ success: true, subcategories, });
@@ -71,15 +71,15 @@ exports.removeSubcategory = async (req, res) => {
 };
 
 exports.getbyCategory = async (req, res) => {
-try {
-  const categoryId = req.params.categoryId;
+  try {
+    const categoryId = req.params.categoryId;
 
-  // Find subcategories that belong to the specified category
-  const subcategories = await Subcategory.find({ categoryId: categoryId });
+    // Find subcategories that belong to the specified category
+    const subcategories = await Subcategory.find({ categoryId: categoryId });
 
-  res.status(200).json({ success: true, subcategories });
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ success: false, error: 'Internal server error' });
-}
+    res.status(200).json({ success: true, subcategories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
 };
